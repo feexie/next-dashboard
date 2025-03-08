@@ -13,11 +13,15 @@ async function listInvoices() {
   return data;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const invoices = await listInvoices();
     return new Response(JSON.stringify(invoices), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    if (error instanceof Error) {
+      return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    }
+    // Fallback if error is not an instance of Error
+    return new Response(JSON.stringify({ error: 'An unknown error occurred' }), { status: 500 });
   }
 }
